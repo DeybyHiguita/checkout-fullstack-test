@@ -35,6 +35,9 @@ checkout-fullstack-test/
 cd backend
 cp .env.example .env        # completar variables (ver sección Variables de entorno)
 npm install
+docker compose up -d        # PostgreSQL local en :5432
+npm run migration:run       # crea el esquema
+npm run db:seed             # siembra productos dummy + stock
 npm run start:dev           # http://localhost:3000/api/v1
 ```
 
