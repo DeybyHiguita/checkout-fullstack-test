@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+build/
+backend/dist/
+frontend/dist/
+
+# Test / coverage
+coverage/
+
+# Env / secrets (NUNCA versionar llaves de la pasarela)
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# TypeScript / Nest / Vite caches
+*.tsbuildinfo
+.nest/
+.vite/

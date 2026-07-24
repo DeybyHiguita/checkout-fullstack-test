@@ -1,0 +1,26 @@
+{
+  "name": "checkout-fullstack-test",
+  "version": "0.1.0",
+  "description": "Full-stack checkout de un producto pagado con pasarela de pagos (Sandbox). Monorepo: NestJS (hexagonal + ROP) + React/Redux.",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "format": "prettier --write \"backend/src/**/*.ts\" \"frontend/src/**/*.{ts,tsx}\"",
+    "lint": "npm --prefix backend run lint && npm --prefix frontend run lint",
+    "test": "npm --prefix backend run test && npm --prefix frontend run test",
+    "test:cov": "npm --prefix backend run test:cov && npm --prefix frontend run test:cov"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.4.2"
+  },
+  "lint-staged": {
+    "backend/src/**/*.ts": [
+      "prettier --write"
+    ],
+    "frontend/src/**/*.{ts,tsx}": [
+      "prettier --write"
+    ]
+  }
+}
