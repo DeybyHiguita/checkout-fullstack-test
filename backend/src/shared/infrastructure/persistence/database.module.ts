@@ -23,7 +23,7 @@ import { ormEntities } from './data-source';
                 database: config.get<string>('DB_NAME'),
               }),
           entities: ormEntities,
-          synchronize: false,
+          synchronize: config.get<boolean>('DB_SYNCHRONIZE', false),
           // En producción (p. ej. Railway/Render) suele requerirse SSL.
           ssl: isProd ? { rejectUnauthorized: false } : false,
         };

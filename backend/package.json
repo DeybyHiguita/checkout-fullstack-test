@@ -22,17 +22,21 @@
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
     "migration:generate": "typeorm-ts-node-commonjs -d src/shared/infrastructure/persistence/data-source.ts migration:generate",
-    "db:seed": "ts-node -r tsconfig-paths/register src/shared/infrastructure/persistence/seed.ts"
+    "db:seed": "ts-node -r tsconfig-paths/register src/shared/infrastructure/persistence/seed.ts",
+    "docs:openapi": "nest build && node dist/scripts/export-openapi.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.4.6",
+    "@nestjs/throttler": "^6.5.0",
     "@nestjs/typeorm": "^11.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "dotenv": "^17.4.2",
+    "helmet": "^8.3.0",
     "joi": "^18.2.3",
     "pg": "^8.22.0",
     "reflect-metadata": "^0.2.2",
@@ -94,10 +98,19 @@
       "/payment-gateway/payment-gateway\\.adapter\\.ts$",
       "env.validation\\.ts$",
       "/testing/",
+      "/scripts/",
       "system-clock\\.adapter\\.ts$",
       "uuid-generator\\.adapter\\.ts$",
       "numeric\\.transformer\\.ts$"
     ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 80,
+        "branches": 80,
+        "functions": 80,
+        "lines": 80
+      }
+    },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

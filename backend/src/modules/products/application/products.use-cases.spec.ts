@@ -56,6 +56,15 @@ describe('GetProductUseCase', () => {
     if (result.ok) expect(result.value.availableQuantity).toBe(4);
   });
 
+  it('reporta 0 disponibles si el producto existe pero no tiene stock item', async () => {
+    const result = await new GetProductUseCase(
+      new FakeProductRepository([product]),
+      new FakeStockRepository([]),
+    ).execute('p1');
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.availableQuantity).toBe(0);
+  });
+
   it('falla con PRODUCT_NOT_FOUND si no existe', async () => {
     const result = await new GetProductUseCase(
       new FakeProductRepository([]),

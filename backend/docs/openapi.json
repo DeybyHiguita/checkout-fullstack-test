@@ -1,0 +1,404 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "operationId": "ProductsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/v1/products/{id}": {
+      "get": {
+        "operationId": "ProductsController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/v1/customers/{id}": {
+      "get": {
+        "operationId": "CustomersController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers"
+        ]
+      }
+    },
+    "/api/v1/deliveries/{id}": {
+      "get": {
+        "operationId": "DeliveriesController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Deliveries"
+        ]
+      }
+    },
+    "/api/v1/transactions": {
+      "post": {
+        "operationId": "TransactionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/transactions/{id}/pay": {
+      "post": {
+        "operationId": "TransactionsController_pay",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayTransactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/transactions/{id}": {
+      "get": {
+        "operationId": "TransactionsController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/transactions/number/{transactionNumber}": {
+      "get": {
+        "operationId": "TransactionsController_detailByNumber",
+        "parameters": [
+          {
+            "name": "transactionNumber",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/payments/acceptance-token": {
+      "get": {
+        "operationId": "PaymentsController_acceptanceToken",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Payments"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Checkout Full-Stack API",
+    "description": "API del checkout de un producto pagado con pasarela de pagos (Sandbox).",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CustomerDto": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 150
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 150,
+            "format": "email"
+          },
+          "documentType": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 10
+          },
+          "documentNumber": {
+            "type": "string",
+            "pattern": "^\\d{6,15}$"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "minLength": 7,
+            "maxLength": 20
+          }
+        },
+        "required": [
+          "fullName",
+          "email",
+          "documentType",
+          "documentNumber",
+          "phoneNumber"
+        ]
+      },
+      "DeliveryDto": {
+        "type": "object",
+        "properties": {
+          "addressLine": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "region": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "postalCode": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "country": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2
+          }
+        },
+        "required": [
+          "addressLine",
+          "city",
+          "region"
+        ]
+      },
+      "CreateTransactionDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerDto"
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/DeliveryDto"
+          }
+        },
+        "required": [
+          "productId",
+          "customer",
+          "delivery"
+        ]
+      },
+      "PayTransactionDto": {
+        "type": "object",
+        "properties": {
+          "cardToken": {
+            "type": "string"
+          },
+          "acceptanceToken": {
+            "type": "string"
+          },
+          "installments": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 36
+          }
+        },
+        "required": [
+          "cardToken",
+          "acceptanceToken"
+        ]
+      }
+    }
+  }
+}

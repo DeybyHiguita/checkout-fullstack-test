@@ -9,12 +9,11 @@ import { GetAcceptanceTokenUseCase } from './application/get-acceptance-token.us
 import { GetTransactionUseCase } from './application/get-transaction.use-case';
 import { ProcessPaymentUseCase } from './application/process-payment.use-case';
 import { FEE_POLICY } from './domain/fee-policy.port';
-import { PAYMENT_GATEWAY } from './domain/payment-gateway.port';
 import { TRANSACTION_REPOSITORY } from './domain/transaction.repository';
 import { EnvFeePolicyAdapter } from './infrastructure/fee-policy/env-fee-policy.adapter';
 import { PaymentsController } from './infrastructure/http/payments.controller';
 import { TransactionsController } from './infrastructure/http/transactions.controller';
-import { PaymentGatewayAdapter } from './infrastructure/payment-gateway/payment-gateway.adapter';
+import { paymentGatewayProvider } from './infrastructure/payment-gateway/payment-gateway.provider';
 import { TransactionOrmEntity } from './infrastructure/persistence/transaction.orm-entity';
 import { TypeOrmTransactionRepository } from './infrastructure/persistence/typeorm-transaction.repository';
 
@@ -30,7 +29,7 @@ import { TypeOrmTransactionRepository } from './infrastructure/persistence/typeo
   providers: [
     { provide: TRANSACTION_REPOSITORY, useClass: TypeOrmTransactionRepository },
     { provide: FEE_POLICY, useClass: EnvFeePolicyAdapter },
-    { provide: PAYMENT_GATEWAY, useClass: PaymentGatewayAdapter },
+    paymentGatewayProvider,
     CreatePendingTransactionUseCase,
     GetTransactionUseCase,
     ProcessPaymentUseCase,

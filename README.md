@@ -81,7 +81,19 @@ Base URL local: `http://localhost:3000/api/v1`. Todas las respuestas de error us
 | GET | `/transactions/number/:n` | Estado por número legible (`TXN-YYYYMMDD-000123`) |
 | GET | `/payments/acceptance-token` | Token de aceptación de términos de la pasarela |
 
-_Colección Postman / Swagger: pendiente (se publicará en `/api/docs` y en `docs/`)._
+**Documentación interactiva:** con el backend corriendo, **Swagger UI** está en
+`http://localhost:3000/api/v1/docs`. El contrato OpenAPI se exporta con `npm run docs:openapi`
+a [`backend/docs/openapi.json`](backend/docs/openapi.json), y hay una **colección Postman** lista
+en [`backend/docs/postman_collection.json`](backend/docs/postman_collection.json).
+
+### Modo de pasarela: real vs simulado (demo local sin llaves)
+
+`PAYMENT_GATEWAY_MODE` controla la implementación:
+
+- `simulated` (por defecto si no hay `GATEWAY_BASE_URL`): **no hace llamadas de red**; el
+  resultado se decide por el token — `tok_decline...` → declinada, `tok_error...` → error,
+  cualquier otro → aprobada. Permite probar todo el flujo localmente **sin llaves**.
+- `real`: usa el adaptador HTTP contra la pasarela (requiere las llaves de Sandbox).
 
 ### Integración con la pasarela de pagos
 
@@ -114,13 +126,26 @@ lista para funcionar en cuanto se configuren las credenciales.
 ## Testing
 
 ```bash
-# Backend
+# Backend — unit + cobertura (gate 80%)
 cd backend && npm run test:cov
+# Backend — E2E (requiere Postgres arriba; crea una BD checkout_e2e temporal)
+cd backend && npm run test:e2e
 # Frontend
 cd frontend && npm run test:cov
 ```
 
-_Resultados de cobertura: pendiente de pegar aquí antes de la entrega._
+Cobertura backend (unit, gate ≥80% en las 4 métricas):
+
+```
+All files | % Stmts 97.44 | % Branch 82.9 | % Funcs 98.96 | % Lines 98.54
+108 tests, 15 suites — verde.
+```
+
+Los E2E (6 casos) cubren el flujo completo contra Postgres real con la pasarela simulada:
+aprobado (decrementa stock), declinado (libera stock), sin stock (409), doble pago (409),
+validación (400).
+
+_Cobertura de frontend: pendiente (fase de frontend)._
 
 ## Deploy
 
@@ -128,6 +153,9 @@ _Links de la app y la API desplegadas: pendiente._
 
 ## Notas de seguridad
 
+- **Helmet** (security headers) y **rate limiting** (60 req/min por IP) activos.
+- Validación de variables de entorno al arranque (Joi) — la app no levanta si falta algo crítico.
+- Validación estricta de entrada (`class-validator`, `whitelist` + `forbidNonWhitelisted`).
 - Todo el flujo de pago se prueba **solo en Sandbox**.
 - Sin datos sensibles de tarjeta persistidos en BD, `localStorage` ni logs.
-- HTTPS + security headers (Helmet) en producción; CORS restringido al dominio del frontend.
+- HTTPS en producción; CORS restringido al dominio del frontend.

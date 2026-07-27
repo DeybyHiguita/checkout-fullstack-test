@@ -185,4 +185,41 @@ describe('ProcessPaymentUseCase', () => {
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.type).toBe('TRANSACTION_NOT_FOUND');
   });
+
+  it('hace polling: PENDING inicial y luego APPROVED', async () => {
+    const pending: GatewayPaymentResult = {
+      gatewayTransactionId: 'gw-p',
+      status: 'PENDING',
+      cardBrand: null,
+      cardLastFour: null,
+      raw: { status: 'PENDING' },
+    };
+    const approved: GatewayPaymentResult = {
+      gatewayTransactionId: 'gw-p',
+      status: 'APPROVED',
+      cardBrand: 'VISA',
+      cardLastFour: '4242',
+      raw: { status: 'APPROVED' },
+    };
+    const { useCase } = build({
+      gateway: { createResult: ok(pending), statusResult: ok(approved) },
+    });
+    const result = await useCase.execute(payInput);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.status).toBe('APPROVED');
+  }, 10000);
+
+  it('lanza error inesperado si la tx PENDING no tiene cliente (estado inconsistente)', async () => {
+    const transactions = new FakeTransactionRepository();
+    void transactions.save(makePendingTx());
+    const useCase = new ProcessPaymentUseCase(
+      transactions,
+      new FakeStockRepository([]),
+      new FakeDeliveryRepository(),
+      new FakeCustomerRepository([]),
+      new FakePaymentGateway(),
+      new FakeClock(),
+    );
+    await expect(useCase.execute(payInput)).rejects.toThrow(/Cliente/);
+  });
 });
