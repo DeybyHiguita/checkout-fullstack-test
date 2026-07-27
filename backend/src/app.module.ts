@@ -17,6 +17,9 @@ import { DatabaseModule } from './shared/infrastructure/persistence/database.mod
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      // En tests (E2E) se ignora el archivo .env para leer solo process.env,
+      // garantizando aislamiento (p. ej. usar la BD checkout_e2e, no la de dev).
+      ignoreEnvFile: process.env.NODE_ENV === 'test',
       validationSchema: envValidationSchema,
     }),
     // Rate limiting global: 60 solicitudes por minuto por IP.

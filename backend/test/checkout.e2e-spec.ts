@@ -77,10 +77,8 @@ describe('Checkout (e2e)', () => {
       .send({ productId, customer, delivery });
 
   beforeAll(async () => {
-    process.env.NODE_ENV = 'test';
-    process.env.DB_SYNCHRONIZE = 'true';
-    process.env.PAYMENT_GATEWAY_MODE = 'simulated';
-    process.env.DATABASE_URL = `postgres://${DB.user}:${DB.password}@${DB.host}:${DB.port}/${TEST_DB}`;
+    // El entorno (NODE_ENV=test, DATABASE_URL a checkout_e2e, pasarela simulada)
+    // lo fija test/e2e-setup.ts antes de importar los módulos.
     await recreateDatabase();
 
     const moduleRef = await Test.createTestingModule({
