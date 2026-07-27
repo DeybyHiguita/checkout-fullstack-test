@@ -1,0 +1,101 @@
+{
+  "info": {
+    "name": "Checkout Full-Stack API",
+    "description": "Colección para probar el checkout: productos, transacciones y pago. Con el modo de pasarela 'simulated' (por defecto sin llaves), un cardToken normal aprueba; 'tok_decline...' declina y 'tok_error...' falla.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1" },
+    { "key": "productId", "value": "" },
+    { "key": "transactionId", "value": "" },
+    { "key": "transactionNumber", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "GET /products",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const list = pm.response.json();",
+              "if (Array.isArray(list) && list.length) {",
+              "  pm.collectionVariables.set('productId', list[0].id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": { "method": "GET", "url": "{{baseUrl}}/products" }
+    },
+    {
+      "name": "GET /products/:id",
+      "request": { "method": "GET", "url": "{{baseUrl}}/products/{{productId}}" }
+    },
+    {
+      "name": "POST /transactions (crear PENDING)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const tx = pm.response.json();",
+              "pm.collectionVariables.set('transactionId', tx.transactionId);",
+              "pm.collectionVariables.set('transactionNumber', tx.transactionNumber);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/transactions",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"customer\": {\n    \"fullName\": \"Jane Doe\",\n    \"email\": \"jane@example.com\",\n    \"documentType\": \"CC\",\n    \"documentNumber\": \"1234567890\",\n    \"phoneNumber\": \"3001234567\"\n  },\n  \"delivery\": {\n    \"addressLine\": \"Cra 1 # 2-3\",\n    \"city\": \"Bogotá\",\n    \"region\": \"Cundinamarca\",\n    \"country\": \"CO\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "GET /payments/acceptance-token",
+      "request": { "method": "GET", "url": "{{baseUrl}}/payments/acceptance-token" }
+    },
+    {
+      "name": "POST /transactions/:id/pay (aprobar)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/transactions/{{transactionId}}/pay",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cardToken\": \"tok_test_approved\",\n  \"acceptanceToken\": \"simulated_acceptance_token\",\n  \"installments\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "POST /transactions/:id/pay (declinar) — usar tx nueva",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/transactions/{{transactionId}}/pay",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cardToken\": \"tok_decline_test\",\n  \"acceptanceToken\": \"simulated_acceptance_token\",\n  \"installments\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "GET /transactions/:id",
+      "request": { "method": "GET", "url": "{{baseUrl}}/transactions/{{transactionId}}" }
+    },
+    {
+      "name": "GET /transactions/number/:transactionNumber",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/transactions/number/{{transactionNumber}}"
+      }
+    }
+  ]
+}

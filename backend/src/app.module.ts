@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CustomersModule } from './modules/customers/customers.module';
@@ -17,6 +19,8 @@ import { DatabaseModule } from './shared/infrastructure/persistence/database.mod
       isGlobal: true,
       validationSchema: envValidationSchema,
     }),
+    // Rate limiting global: 60 solicitudes por minuto por IP.
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
     DatabaseModule,
     SharedModule,
     ProductsModule,
@@ -26,6 +30,6 @@ import { DatabaseModule } from './shared/infrastructure/persistence/database.mod
     TransactionsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
