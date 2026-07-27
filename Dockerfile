@@ -12,6 +12,14 @@ RUN npm ci --include=dev
 COPY frontend/ ./
 # El SPA consume la API en el mismo origen.
 ENV VITE_API_URL=/api/v1
+# Llave PÚBLICA + URL de la pasarela para tokenizar la tarjeta en el navegador.
+# Se hornean en el build (Vite). Railway las inyecta como build args con los
+# mismos nombres del backend. Si van vacías, el frontend queda en modo simulado.
+# (La llave privada y el secreto de integridad NUNCA se exponen al frontend.)
+ARG GATEWAY_PUBLIC_KEY=""
+ARG GATEWAY_BASE_URL=""
+ENV VITE_GATEWAY_PUBLIC_KEY=$GATEWAY_PUBLIC_KEY
+ENV VITE_GATEWAY_BASE_URL=$GATEWAY_BASE_URL
 RUN npm run build
 
 # --- Stage 2: compilar el backend ---
