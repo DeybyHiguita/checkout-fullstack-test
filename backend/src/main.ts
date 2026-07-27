@@ -11,7 +11,24 @@ async function bootstrap(): Promise<void> {
   const config = app.get(ConfigService);
   const apiPrefix = config.get<string>('API_PREFIX', 'api/v1');
 
-  app.use(helmet());
+  // CSP: el navegador tokeniza la tarjeta contra la pasarela (otro origen),
+  // así que se permite connect-src hacia su dominio. img-src permite las
+  // imágenes de producto (https/data). El resto queda restringido a 'self'.
+  const gatewayBaseUrl = config.get<string>('GATEWAY_BASE_URL');
+  const gatewayOrigin = gatewayBaseUrl ? new URL(gatewayBaseUrl).origin : null;
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          connectSrc: ["'self'", ...(gatewayOrigin ? [gatewayOrigin] : [])],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+        },
+      },
+    }),
+  );
   app.setGlobalPrefix(apiPrefix);
 
   app.useGlobalPipes(
