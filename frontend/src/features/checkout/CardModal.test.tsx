@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import type { Product } from '../../shared/types';
@@ -100,6 +101,22 @@ describe('CardModal', () => {
     expect(checkout.cardLastFour).toBe('4242');
     expect(checkout.customer?.email).toBe('jane@example.com');
     expect(checkout.step).toBe('SUMMARY');
+  });
+
+  it('el botón flotante de demo autollena y permite pagar sin teclear', async () => {
+    mockedGateway.getAcceptanceToken.mockResolvedValue('acc-token');
+    mockedGateway.tokenizeCard.mockResolvedValue('tok_test_4242');
+    const store = setup();
+
+    await userEvent.click(screen.getByRole('button', { name: /autollenar datos de prueba/i }));
+    await userEvent.click(screen.getByRole('menuitem', { name: /aprobada/i }));
+
+    // El número quedó cargado con máscara.
+    expect(screen.getByPlaceholderText('4242 4242 4242 4242')).toHaveValue('4242 4242 4242 4242');
+
+    await userEvent.click(screen.getByRole('button', { name: /continuar al resumen/i }));
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/summary'));
+    expect(store.getState().checkout.cardLastFour).toBe('4242');
   });
 
   it('muestra error de servidor si la tokenización falla', async () => {

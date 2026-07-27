@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { formatCurrency } from '../../shared/format';
+import { useDocumentTitle } from '../../shared/useDocumentTitle';
 import type { Product } from '../../shared/types';
 import { fetchProducts } from './productSlice';
 import './ProductPage.css';
@@ -10,6 +11,7 @@ export function ProductPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { items, loading, error } = useAppSelector((state) => state.product);
+  useDocumentTitle('Productos');
 
   useEffect(() => {
     void dispatch(fetchProducts());
