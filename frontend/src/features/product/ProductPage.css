@@ -1,0 +1,131 @@
+.product-page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+}
+
+.product-page__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1rem;
+}
+
+.product-page__status {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+.product-page__status--error {
+  color: var(--danger);
+}
+
+.product-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.product-card__image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--border);
+}
+
+.product-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.product-card__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.product-card__description {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.product-card__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.product-card__price {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.product-card__stock {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.product-card__stock--out {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.btn--primary {
+  background: var(--primary);
+  color: #fff;
+  margin-top: 0.5rem;
+}
+
+.btn--primary:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.btn--secondary {
+  background: var(--surface);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  display: block;
+  margin: 1rem auto 0;
+}
+
+/* Desktop: rejilla de 2 columnas cuando hay espacio */
+@media (min-width: 720px) {
+  .product-page {
+    max-width: 900px;
+  }
+  .product-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
