@@ -6,6 +6,7 @@ import { formatCurrency } from '../../shared/format';
 import { useDocumentTitle } from '../../shared/useDocumentTitle';
 import { fetchProducts } from '../product/productSlice';
 import { submitCardDelivery } from './checkoutSlice';
+import { DemoFillFab, type DemoVariant } from './DemoFillFab';
 import { gatewayApi } from './gatewayApi';
 import { validateForm, type CheckoutForm, type FormErrors } from './cardFormValidation';
 import { detectCardBrand } from './validators/cardBrand';
@@ -141,6 +142,31 @@ export function CardModal() {
     onBlur: handleBlur,
   });
 
+  // Autollenado de prueba (solo modo demo). El número de tarjeta define el resultado.
+  const fillDemo = (variant: DemoVariant) => {
+    const cardByVariant: Record<DemoVariant, string> = {
+      approved: '4242 4242 4242 4242',
+      declined: '4000 0000 0000 0002',
+      error: '4000 0000 0000 0119',
+    };
+    setForm({
+      cardNumber: cardByVariant[variant],
+      cardHolder: 'Jane Doe',
+      expiry: '12/29',
+      cvc: '123',
+      fullName: 'Jane Doe',
+      email: 'jane@example.com',
+      documentType: 'CC',
+      documentNumber: '1234567890',
+      phoneNumber: '3001234567',
+      addressLine: 'Cra 1 # 2-3',
+      city: 'Bogotá',
+      region: 'Cundinamarca',
+      postalCode: '110111',
+      country: 'CO',
+    });
+  };
+
   return (
     <main className="checkout">
       <div className="checkout__sheet">
@@ -174,7 +200,11 @@ export function CardModal() {
                   {...fieldProps('cardNumber')}
                 />
                 {brand !== 'UNKNOWN' && (
-                  <span className={`brand brand--${brand.toLowerCase()}`} data-testid="card-brand">
+                  <span
+                    className={`brand brand--${brand.toLowerCase()}`}
+                    data-testid="card-brand"
+                    aria-hidden="true"
+                  >
                     {brand}
                   </span>
                 )}
@@ -264,6 +294,7 @@ export function CardModal() {
           </button>
         </form>
       </div>
+      <DemoFillFab onFill={fillDemo} />
     </main>
   );
 }
