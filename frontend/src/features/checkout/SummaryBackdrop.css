@@ -1,0 +1,93 @@
+.summary {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.summary__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.summary__panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-radius: 18px 18px 0 0;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+.summary__title {
+  font-size: 1.25rem;
+  margin: 0 0 0.25rem;
+}
+
+.summary__product {
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.summary__status {
+  padding: 1rem 0;
+  color: var(--muted);
+}
+
+.summary__status--error {
+  color: var(--danger);
+}
+
+.summary__lines {
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.summary__line {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.summary__line dt,
+.summary__line dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+.summary__line--total {
+  border-top: 1px solid var(--border);
+  padding-top: 0.6rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.summary__line--total dt,
+.summary__line--total dd {
+  color: inherit;
+}
+
+.summary__card {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+.summary__pay {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 720px) {
+  .summary {
+    align-items: center;
+  }
+  .summary__panel {
+    border-radius: 18px;
+  }
+}
