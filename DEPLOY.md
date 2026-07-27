@@ -62,10 +62,9 @@ modo simulado.
 - [ ] El seed corrió (hay productos en el catálogo).
 - [ ] README actualizado con la URL desplegada.
 
-## Usar el sandbox REAL en el deploy (opcional)
+## Usar el sandbox REAL en el deploy
 
-Si en vez de simulado quieres el pago real contra el sandbox, en las **Variables** del
-servicio pon (los valores nunca se versionan; son secrets del proveedor):
+En las **Variables** del servicio (los valores nunca se versionan; son secrets del proveedor):
 
 ```
 PAYMENT_GATEWAY_MODE=real
@@ -76,10 +75,14 @@ GATEWAY_INTEGRITY_SECRET=<...integrity...>
 GATEWAY_EVENTS_KEY=<...events...>
 ```
 
-Y como el frontend se compila dentro de la imagen, para tokenizar en el navegador hay
-que build-arg de `VITE_GATEWAY_PUBLIC_KEY`/`VITE_GATEWAY_BASE_URL` (añadir esos `ARG`/`ENV`
-al stage `frontend` del `Dockerfile`). Para la entrega, el modo **simulado** es suficiente
-y no expone credenciales.
+El frontend tokeniza la tarjeta en el navegador con la **llave pública**, que Vite hornea
+en **tiempo de build**. El `Dockerfile` declara `ARG GATEWAY_PUBLIC_KEY` y `ARG GATEWAY_BASE_URL`
+en el stage `frontend`, y Railway los inyecta automáticamente desde las variables del
+servicio (mismos nombres) → el SPA queda apuntando al sandbox real. La llave **privada** y el
+secreto de **integridad** los usa solo el backend; **nunca** llegan al navegador.
+
+Tras cambiar a `real`, **haz un Redeploy** para que se reconstruya el frontend con la llave
+pública. Prueba con la tarjeta de sandbox `4242 4242 4242 4242` (aprobada).
 
 ## Alternativa: frontend y backend separados
 
