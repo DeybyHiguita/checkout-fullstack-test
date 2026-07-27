@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { clearCheckoutState } from '../../app/persistence';
+import { Stepper } from '../../shared/components/Stepper';
 import { formatCurrency } from '../../shared/format';
+import { useDocumentTitle } from '../../shared/useDocumentTitle';
 import { resetCheckout, setStep } from '../checkout/checkoutSlice';
 import { fetchProducts } from '../product/productSlice';
 import { fetchTransaction, resetTransaction } from './transactionSlice';
@@ -51,10 +53,12 @@ export function ResultPage() {
   };
 
   const view = resolveView(transaction.status, transaction.error);
+  useDocumentTitle(view.title);
 
   return (
     <main className="result">
       <section className={`result__panel result__panel--${view.tone}`}>
+        <Stepper current={3} />
         <div className="result__icon" aria-hidden="true">
           {view.icon}
         </div>

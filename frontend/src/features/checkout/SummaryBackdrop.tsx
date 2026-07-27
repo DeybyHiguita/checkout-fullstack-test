@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { Stepper } from '../../shared/components/Stepper';
 import { formatCurrency } from '../../shared/format';
+import { useDocumentTitle } from '../../shared/useDocumentTitle';
 import {
   createTransaction,
   fetchTransaction,
@@ -17,6 +19,7 @@ export function SummaryBackdrop() {
   const products = useAppSelector((s) => s.product.items);
   const transaction = useAppSelector((s) => s.transaction);
   const started = useRef(false);
+  useDocumentTitle('Resumen de pago');
 
   const product = products.find((p) => p.id === checkout.productId);
 
@@ -74,6 +77,7 @@ export function SummaryBackdrop() {
     <main className="summary">
       <div className="summary__backdrop" aria-hidden="true" />
       <section className="summary__panel" role="dialog" aria-label="Resumen de pago">
+        <Stepper current={2} />
         <h1 className="summary__title">Resumen de pago</h1>
 
         {product && <p className="summary__product">{product.name}</p>}

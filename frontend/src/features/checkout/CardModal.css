@@ -12,8 +12,8 @@
   max-width: 480px;
   background: var(--surface);
   border-radius: 18px 18px 0 0;
-  padding: 1rem 1rem 2rem;
-  max-height: 100vh;
+  padding: 1rem 1rem calc(2rem + env(safe-area-inset-bottom));
+  max-height: 100dvh;
   overflow-y: auto;
 }
 
@@ -64,6 +64,7 @@
 
 .checkout__row .field {
   flex: 1;
+  min-width: 0; /* permite que los inputs encojan sin desbordar en 375px */
 }
 
 .field {

@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { Stepper } from '../../shared/components/Stepper';
 import { formatCurrency } from '../../shared/format';
+import { useDocumentTitle } from '../../shared/useDocumentTitle';
 import { fetchProducts } from '../product/productSlice';
 import { submitCardDelivery } from './checkoutSlice';
 import { gatewayApi } from './gatewayApi';
@@ -60,6 +62,7 @@ export function CardModal() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  useDocumentTitle('Pago con tarjeta');
 
   useEffect(() => {
     if (products.length === 0) void dispatch(fetchProducts());
@@ -148,6 +151,8 @@ export function CardModal() {
           <h1 className="checkout__title">Pago con tarjeta</h1>
         </header>
 
+        <Stepper current={1} />
+
         {product && (
           <p className="checkout__product">
             {product.name} ·{' '}
@@ -162,6 +167,7 @@ export function CardModal() {
             <Field label="Número de tarjeta" error={showError('cardNumber')}>
               <div className="checkout__card-input">
                 <input
+                  autoFocus
                   inputMode="numeric"
                   autoComplete="cc-number"
                   placeholder="4242 4242 4242 4242"
