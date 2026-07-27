@@ -8,6 +8,7 @@ import {
   CreateTransactionError,
 } from '../../application/create-pending-transaction.use-case';
 import { GetTransactionUseCase } from '../../application/get-transaction.use-case';
+import { ProcessPaymentUseCase } from '../../application/process-payment.use-case';
 import { Transaction } from '../../domain/transaction.entity';
 import { TransactionsController } from './transactions.controller';
 
@@ -61,7 +62,8 @@ const controllerWith = (
     byId: jest.fn(),
     byNumber: jest.fn(),
   } as unknown as GetTransactionUseCase;
-  return { controller: new TransactionsController(create, get), get };
+  const pay = { execute: jest.fn() } as unknown as ProcessPaymentUseCase;
+  return { controller: new TransactionsController(create, get, pay), get, pay };
 };
 
 /** Ejecuta fn esperando que lance una DomainException y la devuelve. */
@@ -135,5 +137,64 @@ describe('TransactionsController', () => {
     (get.byId as jest.Mock).mockResolvedValue(ok(tx));
     const res = await controller.detail('t1');
     expect(res.transactionNumber).toBe('TXN-20260724-000001');
+  });
+
+  const payDto = {
+    cardToken: 'tok_1',
+    acceptanceToken: 'acc',
+    installments: 1,
+  };
+
+  it('POST :id/pay devuelve la transacción resuelta', async () => {
+    const { controller, pay } = controllerWith(
+      ok({ transaction: tx, delivery }),
+    );
+    const approved = tx.markApproved({
+      gatewayTransactionId: 'gw-1',
+      cardBrand: 'VISA',
+      cardLastFour: '4242',
+      gatewayStatusRaw: null,
+      now: new Date('2026-07-24T15:30:00Z'),
+    });
+    (pay.execute as jest.Mock).mockResolvedValue(approved);
+    const res = await controller.pay('t1', payDto);
+    expect(res.status).toBe('APPROVED');
+    expect(res.cardLastFour).toBe('4242');
+  });
+
+  it('POST :id/pay mapea ALREADY_RESOLVED a 409', async () => {
+    const { controller, pay } = controllerWith(
+      ok({ transaction: tx, delivery }),
+    );
+    (pay.execute as jest.Mock).mockResolvedValue({
+      ok: false,
+      error: { type: 'ALREADY_RESOLVED', status: 'APPROVED' },
+    });
+    const e = await expectThrows(() => controller.pay('t1', payDto));
+    expect(e.getStatus()).toBe(HttpStatus.CONFLICT);
+  });
+
+  it('POST :id/pay mapea GATEWAY_UNAVAILABLE a 502', async () => {
+    const { controller, pay } = controllerWith(
+      ok({ transaction: tx, delivery }),
+    );
+    (pay.execute as jest.Mock).mockResolvedValue({
+      ok: false,
+      error: { type: 'GATEWAY_UNAVAILABLE', detail: 'timeout' },
+    });
+    const e = await expectThrows(() => controller.pay('t1', payDto));
+    expect(e.getStatus()).toBe(HttpStatus.BAD_GATEWAY);
+  });
+
+  it('POST :id/pay mapea TRANSACTION_NOT_FOUND a 404', async () => {
+    const { controller, pay } = controllerWith(
+      ok({ transaction: tx, delivery }),
+    );
+    (pay.execute as jest.Mock).mockResolvedValue({
+      ok: false,
+      error: { type: 'TRANSACTION_NOT_FOUND', transactionId: 't9' },
+    });
+    const e = await expectThrows(() => controller.pay('t9', payDto));
+    expect(e.getStatus()).toBe(HttpStatus.NOT_FOUND);
   });
 });
