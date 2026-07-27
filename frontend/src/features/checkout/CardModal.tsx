@@ -49,8 +49,13 @@ export function CardModal() {
   const navigate = useNavigate();
   const products = useAppSelector((s) => s.product.items);
   const product = products.find((p) => p.id === productId);
+  const saved = useAppSelector((s) => s.checkout);
 
-  const [form, setForm] = useState<CheckoutForm>(emptyForm);
+  const [form, setForm] = useState<CheckoutForm>(() => ({
+    ...emptyForm,
+    ...(saved.customer ?? {}),
+    ...(saved.delivery ?? {}),
+  }));
   const [touched, setTouched] = useState<Partial<Record<keyof CheckoutForm, boolean>>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);

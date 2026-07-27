@@ -75,6 +75,11 @@ const checkoutSlice = createSlice({
       state.acceptanceToken = p.acceptanceToken;
       state.step = 'SUMMARY';
     },
+    /** Guarda la transacción pendiente sin avanzar de paso (para el resumen). */
+    setPendingTransaction(state, action: PayloadAction<{ id: string; number: string }>) {
+      state.transactionId = action.payload.id;
+      state.transactionNumber = action.payload.number;
+    },
     setTransaction(state, action: PayloadAction<{ id: string; number: string }>) {
       state.transactionId = action.payload.id;
       state.transactionNumber = action.payload.number;
@@ -89,6 +94,12 @@ const checkoutSlice = createSlice({
   },
 });
 
-export const { startCheckout, submitCardDelivery, setTransaction, setStep, resetCheckout } =
-  checkoutSlice.actions;
+export const {
+  startCheckout,
+  submitCardDelivery,
+  setPendingTransaction,
+  setTransaction,
+  setStep,
+  resetCheckout,
+} = checkoutSlice.actions;
 export default checkoutSlice.reducer;
