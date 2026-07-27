@@ -1,6 +1,8 @@
+import { join } from 'node:path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -24,6 +26,12 @@ import { DatabaseModule } from './shared/infrastructure/persistence/database.mod
     }),
     // Rate limiting global: 60 solicitudes por minuto por IP.
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
+    // Sirve el SPA compilado (frontend/dist copiado a ./client en el deploy).
+    // Excluye la API para que /api/* siga respondiendo JSON.
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+      exclude: ['/api/{*path}'],
+    }),
     DatabaseModule,
     SharedModule,
     ProductsModule,
