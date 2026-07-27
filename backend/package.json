@@ -13,6 +13,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint:ci": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -20,9 +21,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs -d src/shared/infrastructure/persistence/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run",
+    "migration:run:prod": "typeorm migration:run -d dist/shared/infrastructure/persistence/data-source.js",
     "migration:revert": "npm run typeorm -- migration:revert",
     "migration:generate": "typeorm-ts-node-commonjs -d src/shared/infrastructure/persistence/data-source.ts migration:generate",
     "db:seed": "ts-node -r tsconfig-paths/register src/shared/infrastructure/persistence/seed.ts",
+    "db:seed:prod": "node dist/shared/infrastructure/persistence/seed.js",
+    "deploy:start": "npm run migration:run:prod && npm run db:seed:prod && node dist/main",
     "docs:openapi": "nest build && node dist/scripts/export-openapi.js"
   },
   "dependencies": {
@@ -30,6 +34,7 @@
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/serve-static": "^5.0.5",
     "@nestjs/swagger": "^11.4.6",
     "@nestjs/throttler": "^6.5.0",
     "@nestjs/typeorm": "^11.0.3",

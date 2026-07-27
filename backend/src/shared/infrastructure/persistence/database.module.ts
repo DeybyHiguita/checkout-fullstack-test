@@ -10,7 +10,8 @@ import { ormEntities } from './data-source';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const url = config.get<string>('DATABASE_URL');
-        const isProd = config.get<string>('NODE_ENV') === 'production';
+        // SSL configurable por env: Railway (red interna) no lo usa; Render sí.
+        const useSsl = config.get<boolean>('DB_SSL', false);
         return {
           type: 'postgres' as const,
           ...(url
@@ -24,8 +25,7 @@ import { ormEntities } from './data-source';
               }),
           entities: ormEntities,
           synchronize: config.get<boolean>('DB_SYNCHRONIZE', false),
-          // En producción (p. ej. Railway/Render) suele requerirse SSL.
-          ssl: isProd ? { rejectUnauthorized: false } : false,
+          ssl: useSsl ? { rejectUnauthorized: false } : false,
         };
       },
     }),

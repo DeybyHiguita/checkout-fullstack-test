@@ -19,6 +19,7 @@ export const envValidationSchema = Joi.object({
   DB_PASSWORD: Joi.string().allow('').default('postgres'),
   DB_NAME: Joi.string().default('checkout'),
   DB_SYNCHRONIZE: Joi.boolean().default(false),
+  DB_SSL: Joi.boolean().default(false),
 
   // real | simulated. Sin valor: real si hay GATEWAY_BASE_URL, simulado si no.
   PAYMENT_GATEWAY_MODE: Joi.string().valid('real', 'simulated').optional(),

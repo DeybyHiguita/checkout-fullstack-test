@@ -151,7 +151,15 @@ _Cobertura de frontend: pendiente (fase de frontend)._
 
 ## Deploy
 
-_Links de la app y la API desplegadas: pendiente._
+Se despliega como **un solo servicio** en Railway: la API de NestJS sirve también el SPA de
+React compilado (mismo origen, sin CORS). El `Dockerfile` de la raíz compila ambos y, al
+arrancar, corre migraciones + seed + servidor. Guía paso a paso: **[DEPLOY.md](DEPLOY.md)**.
+
+- App + API: `https://<pendiente>.up.railway.app` _(actualizar tras el deploy)_
+- Swagger: `https://<pendiente>.up.railway.app/api/v1/docs`
+
+**CI/CD:** GitHub Actions (`.github/workflows/ci.yml`) corre lint + tests + gate de
+cobertura (80%) + build de backend y frontend en cada push/PR a `main`.
 
 ## Notas de seguridad
 
