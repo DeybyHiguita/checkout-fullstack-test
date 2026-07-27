@@ -1,0 +1,153 @@
+.checkout {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0;
+}
+
+.checkout__sheet {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-radius: 18px 18px 0 0;
+  padding: 1rem 1rem 2rem;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.checkout__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.checkout__back {
+  border: none;
+  background: transparent;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0.25rem 0.5rem;
+}
+
+.checkout__title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.checkout__product {
+  color: var(--muted);
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+.checkout__group {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.checkout__group legend {
+  padding: 0 0.4rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.checkout__row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.checkout__row .field {
+  flex: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.75rem;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field__label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-size: 1rem;
+  background: var(--bg);
+  color: inherit;
+}
+
+.field--error input,
+.field--error select {
+  border-color: var(--danger);
+}
+
+.field__error {
+  color: var(--danger);
+  font-size: 0.75rem;
+}
+
+.checkout__card-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.checkout__card-input input {
+  padding-right: 5.5rem;
+}
+
+.brand {
+  position: absolute;
+  right: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.brand--visa {
+  background: #1a1f71;
+}
+
+.brand--mastercard {
+  background: #eb001b;
+}
+
+.checkout__server-error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem;
+}
+
+.checkout__submit {
+  width: 100%;
+}
+
+@media (min-width: 720px) {
+  .checkout {
+    align-items: center;
+  }
+  .checkout__sheet {
+    border-radius: 18px;
+    margin: 1rem;
+  }
+}
