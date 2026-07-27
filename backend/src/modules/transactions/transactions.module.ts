@@ -1,13 +1,32 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CustomersModule } from '../customers/customers.module';
+import { DeliveriesModule } from '../deliveries/deliveries.module';
+import { ProductsModule } from '../products/products.module';
+import { StockModule } from '../stock/stock.module';
+import { CreatePendingTransactionUseCase } from './application/create-pending-transaction.use-case';
+import { GetTransactionUseCase } from './application/get-transaction.use-case';
+import { FEE_POLICY } from './domain/fee-policy.port';
 import { TRANSACTION_REPOSITORY } from './domain/transaction.repository';
+import { EnvFeePolicyAdapter } from './infrastructure/fee-policy/env-fee-policy.adapter';
+import { TransactionsController } from './infrastructure/http/transactions.controller';
 import { TransactionOrmEntity } from './infrastructure/persistence/transaction.orm-entity';
 import { TypeOrmTransactionRepository } from './infrastructure/persistence/typeorm-transaction.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TransactionOrmEntity])],
+  imports: [
+    TypeOrmModule.forFeature([TransactionOrmEntity]),
+    ProductsModule,
+    StockModule,
+    DeliveriesModule,
+    CustomersModule,
+  ],
+  controllers: [TransactionsController],
   providers: [
     { provide: TRANSACTION_REPOSITORY, useClass: TypeOrmTransactionRepository },
+    { provide: FEE_POLICY, useClass: EnvFeePolicyAdapter },
+    CreatePendingTransactionUseCase,
+    GetTransactionUseCase,
   ],
   exports: [TRANSACTION_REPOSITORY],
 })
