@@ -65,13 +65,15 @@ describe('Result (ROP)', () => {
 
   describe('chainAsync', () => {
     it('encadena en éxito', async () => {
-      const r = await chainAsync(ok<number, string>(2), async (n) =>
-        ok<number, string>(n + 1),
+      const r = await chainAsync(ok<number, string>(2), (n) =>
+        Promise.resolve(ok<number, string>(n + 1)),
       );
       expect(r).toEqual(ok(3));
     });
     it('no ejecuta fn si viene error', async () => {
-      const spy = jest.fn(async (n: number) => ok<number, string>(n));
+      const spy = jest.fn((n: number) =>
+        Promise.resolve(ok<number, string>(n)),
+      );
       const r = await chainAsync(err<string, number>('x'), spy);
       expect(r).toEqual(err('x'));
       expect(spy).not.toHaveBeenCalled();

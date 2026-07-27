@@ -30,6 +30,8 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
     "dotenv": "^17.4.2",
     "joi": "^18.2.3",
     "pg": "^8.22.0",
@@ -69,12 +71,31 @@
       "ts"
     ],
     "rootDir": "src",
+    "setupFiles": [
+      "reflect-metadata"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "main.ts",
+      "\\.module\\.ts$",
+      "\\.orm-entity\\.ts$",
+      "data-source\\.ts$",
+      "database\\.module\\.ts$",
+      "seed\\.ts$",
+      "/migrations/",
+      "/persistence/typeorm-.*\\.repository\\.ts$",
+      "env.validation\\.ts$",
+      "/testing/",
+      "system-clock\\.adapter\\.ts$",
+      "uuid-generator\\.adapter\\.ts$",
+      "numeric\\.transformer\\.ts$"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

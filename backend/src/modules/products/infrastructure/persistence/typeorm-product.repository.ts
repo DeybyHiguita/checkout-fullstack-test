@@ -14,7 +14,7 @@ export class TypeOrmProductRepository implements ProductRepository {
 
   async findAll(): Promise<Product[]> {
     const rows = await this.repo.find({ order: { createdAt: 'ASC' } });
-    return rows.map(TypeOrmProductRepository.toDomain);
+    return rows.map((row) => TypeOrmProductRepository.toDomain(row));
   }
 
   async findById(id: string): Promise<Product | null> {
