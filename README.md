@@ -26,6 +26,8 @@ checkout-fullstack-test/
 
 ## Cómo correr en local
 
+> Guía detallada (setup, parar y volver a correr, reiniciar BD, troubleshooting): **[RUN_LOCAL.md](RUN_LOCAL.md)**.
+
 ### Requisitos
 - Node.js 22+, npm 10+
 - Docker (para PostgreSQL local) — _o_ una instancia de Postgres accesible.
