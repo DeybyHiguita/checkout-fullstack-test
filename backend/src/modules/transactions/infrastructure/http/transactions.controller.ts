@@ -14,7 +14,12 @@ import {
   CreateTransactionError,
 } from '../../application/create-pending-transaction.use-case';
 import { GetTransactionUseCase } from '../../application/get-transaction.use-case';
+import {
+  ProcessPaymentError,
+  ProcessPaymentUseCase,
+} from '../../application/process-payment.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { PayTransactionDto } from './dto/pay-transaction.dto';
 import {
   toTransactionResponse,
   TransactionResponseDto,
@@ -25,6 +30,7 @@ export class TransactionsController {
   constructor(
     private readonly createPendingTransaction: CreatePendingTransactionUseCase,
     private readonly getTransaction: GetTransactionUseCase,
+    private readonly processPayment: ProcessPaymentUseCase,
   ) {}
 
   @Post()
@@ -42,6 +48,24 @@ export class TransactionsController {
       throw TransactionsController.toHttp(result.error);
     }
     return toTransactionResponse(result.value.transaction);
+  }
+
+  @Post(':id/pay')
+  @HttpCode(HttpStatus.OK)
+  async pay(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: PayTransactionDto,
+  ): Promise<TransactionResponseDto> {
+    const result = await this.processPayment.execute({
+      transactionId: id,
+      cardToken: dto.cardToken,
+      acceptanceToken: dto.acceptanceToken,
+      installments: dto.installments ?? 1,
+    });
+    if (!result.ok) {
+      throw TransactionsController.payToHttp(result.error);
+    }
+    return toTransactionResponse(result.value);
   }
 
   @Get(':id')
@@ -88,6 +112,28 @@ export class TransactionsController {
           error: 'VALIDATION_ERROR',
           message: 'Los datos del cliente son inválidos',
           details: { reason: error.detail.type },
+        });
+    }
+  }
+
+  private static payToHttp(error: ProcessPaymentError): DomainException {
+    switch (error.type) {
+      case 'TRANSACTION_NOT_FOUND':
+        return TransactionsController.notFound(error.transactionId);
+      case 'ALREADY_RESOLVED':
+        return new DomainException({
+          statusCode: HttpStatus.CONFLICT,
+          error: 'TRANSACTION_ALREADY_RESOLVED',
+          message: 'La transacción ya fue resuelta',
+          details: { status: error.status },
+        });
+      case 'GATEWAY_UNAVAILABLE':
+        return new DomainException({
+          statusCode: HttpStatus.BAD_GATEWAY,
+          error: 'GATEWAY_UNAVAILABLE',
+          message:
+            'La pasarela de pagos no está disponible; la transacción sigue pendiente',
+          details: error.detail ? { detail: error.detail } : undefined,
         });
     }
   }

@@ -7,10 +7,17 @@ import { ProductRepository } from '../../modules/products/domain/product.reposit
 import { StockItem } from '../../modules/stock/domain/stock-item.entity';
 import { StockRepository } from '../../modules/stock/domain/stock.repository';
 import { FeePolicyPort } from '../../modules/transactions/domain/fee-policy.port';
+import {
+  CreatePaymentInput,
+  GatewayError,
+  GatewayPaymentResult,
+  PaymentGatewayPort,
+} from '../../modules/transactions/domain/payment-gateway.port';
 import { Transaction } from '../../modules/transactions/domain/transaction.entity';
 import { TransactionRepository } from '../../modules/transactions/domain/transaction.repository';
 import { ClockPort } from '../domain/ports/clock.port';
 import { IdGeneratorPort } from '../domain/ports/id-generator.port';
+import { ok, Result } from '../domain/result';
 
 export class FakeProductRepository implements ProductRepository {
   constructor(private readonly items: Product[] = []) {}
@@ -129,5 +136,46 @@ export class FakeFeePolicy implements FeePolicyPort {
   }
   getDeliveryFeeInCents(_city: string): number {
     return this.deliveryFee;
+  }
+}
+
+const approvedResult = (): GatewayPaymentResult => ({
+  gatewayTransactionId: 'gw-1',
+  status: 'APPROVED',
+  cardBrand: 'VISA',
+  cardLastFour: '4242',
+  raw: { status: 'APPROVED' },
+});
+
+export interface FakeGatewayConfig {
+  acceptanceToken?: Result<string, GatewayError>;
+  createResult?: Result<GatewayPaymentResult, GatewayError>;
+  statusResult?: Result<GatewayPaymentResult, GatewayError>;
+}
+
+/** Pasarela simulada: por defecto aprueba. Configurable para declinar/fallar. */
+export class FakePaymentGateway implements PaymentGatewayPort {
+  public createCalls = 0;
+  constructor(private readonly config: FakeGatewayConfig = {}) {}
+
+  getAcceptanceToken(): Promise<Result<string, GatewayError>> {
+    return Promise.resolve(this.config.acceptanceToken ?? ok('acc-token'));
+  }
+
+  createPayment(
+    _input: CreatePaymentInput,
+  ): Promise<Result<GatewayPaymentResult, GatewayError>> {
+    this.createCalls += 1;
+    return Promise.resolve(this.config.createResult ?? ok(approvedResult()));
+  }
+
+  getPaymentStatus(
+    _gatewayTransactionId: string,
+  ): Promise<Result<GatewayPaymentResult, GatewayError>> {
+    return Promise.resolve(
+      this.config.statusResult ??
+        this.config.createResult ??
+        ok(approvedResult()),
+    );
   }
 }

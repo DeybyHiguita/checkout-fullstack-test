@@ -66,7 +66,50 @@ _(Detalle de modelo de datos, endpoints y máquina de estados: pendiente de docu
 
 ## API
 
+Base URL local: `http://localhost:3000/api/v1`. Todas las respuestas de error usan el shape
+`{ statusCode, error, message, details? }`.
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/products` | Lista productos con unidades comprables |
+| GET | `/products/:id` | Detalle de producto + stock |
+| GET | `/customers/:id` | Detalle de cliente |
+| GET | `/deliveries/:id` | Detalle de entrega |
+| POST | `/transactions` | Crea transacción `PENDING` y reserva stock |
+| POST | `/transactions/:id/pay` | Ejecuta el pago contra la pasarela y resuelve la transacción |
+| GET | `/transactions/:id` | Estado de la transacción (polling) |
+| GET | `/transactions/number/:n` | Estado por número legible (`TXN-YYYYMMDD-000123`) |
+| GET | `/payments/acceptance-token` | Token de aceptación de términos de la pasarela |
+
 _Colección Postman / Swagger: pendiente (se publicará en `/api/docs` y en `docs/`)._
+
+### Integración con la pasarela de pagos
+
+La integración está implementada y **solo requiere cargar las llaves de Sandbox** en
+`backend/.env` (nunca se versionan). Variables:
+
+```
+GATEWAY_BASE_URL=<UAT Sandbox URL>
+GATEWAY_PUBLIC_KEY=<pub_stagtest_...>
+GATEWAY_PRIVATE_KEY=<prv_stagtest_...>
+GATEWAY_INTEGRITY_SECRET=<stagtest_integrity_...>
+GATEWAY_EVENTS_KEY=<stagtest_events_...>
+```
+
+Flujo (adaptador `PaymentGatewayAdapter`, nombre neutro sin marca):
+
+1. El frontend obtiene el `acceptance_token` (`GET /payments/acceptance-token`) y **tokeniza la
+   tarjeta directamente contra la pasarela** con la llave pública — el PAN/CVC nunca tocan el backend.
+2. `POST /transactions` crea la transacción `PENDING` y reserva stock.
+3. `POST /transactions/:id/pay` envía monto, moneda, token de tarjeta, `acceptance_token` y la
+   **firma de integridad** (`sha256(reference + amount + currency + secret)`) con la llave privada,
+   hace polling hasta un estado terminal y resuelve la transacción vía el pipeline ROP:
+   - `APPROVED` → decrementa stock + asigna la entrega.
+   - `DECLINED`/`ERROR` → libera la reserva de stock.
+   - Si la pasarela no responde → `502` y la transacción **queda `PENDING`** (nunca se asume éxito).
+
+Sin llaves, `/pay` y `/payments/acceptance-token` responden `502 GATEWAY_UNAVAILABLE` (verificado),
+lista para funcionar en cuanto se configuren las credenciales.
 
 ## Testing
 

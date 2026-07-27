@@ -91,6 +91,7 @@
       "seed\\.ts$",
       "/migrations/",
       "/persistence/typeorm-.*\\.repository\\.ts$",
+      "/payment-gateway/payment-gateway\\.adapter\\.ts$",
       "env.validation\\.ts$",
       "/testing/",
       "system-clock\\.adapter\\.ts$",
